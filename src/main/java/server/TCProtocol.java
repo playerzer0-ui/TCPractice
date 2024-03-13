@@ -21,4 +21,10 @@ public class TCProtocol {
     public final static String FOUND = "FOUND";
     public final static String BOUNDS = "OUT_OF_BOUNDS";
 
+    //Math exercise
+    public final static String SQUARE = "SQUARE";
+    public final static String PLEASE_SUPPLY_NUMBER = "PLEASE_SUPPLY_NUMBER";
+    public final static String CUBE = "CUBE";
+    public final static String MYLARGEST = "MYLARGEST";
+
 }
