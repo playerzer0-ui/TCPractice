@@ -49,6 +49,9 @@ public class TCPMathServer {
                                             largest = result;
                                         }
                                     }
+                                    else{
+                                        response = TCProtocol.PLEASE_SUPPLY_NUMBER;
+                                    }
                                 }else{
                                     response = TCProtocol.INVALID;
                                 }
@@ -66,6 +69,9 @@ public class TCPMathServer {
                                         if(result > largest){
                                             largest = result;
                                         }
+                                    }
+                                    else{
+                                        response = TCProtocol.PLEASE_SUPPLY_NUMBER;
                                     }
                                 }else{
                                     response = TCProtocol.INVALID;

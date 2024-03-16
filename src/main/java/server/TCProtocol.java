@@ -28,4 +28,14 @@ public class TCProtocol {
     public final static String CUBE = "CUBE";
     public final static String MYLARGEST = "MYLARGEST";
 
+    //Quote Exercise
+    public final static String ADD = "ADD";
+    public final static String EMPTY = "EMPTY";
+    public final static String REMOVE = "REMOVE";
+    public final static String ADDED = "ADDED";
+    public final static String REMOVED = "REMOVED";
+    public final static String GET_QUOTE = "GET_QUOTE";
+    public final static String NOT_EXIST = "QUOTE_DOES_NOT_EXIST";
+    public final static String ERROR = "ERROR";
+
 }

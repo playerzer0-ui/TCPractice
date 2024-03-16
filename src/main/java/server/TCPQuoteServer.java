@@ -7,10 +7,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 
 public class TCPQuoteServer {
     public static void main(String[] args) {
+        System.out.println("server quote online");
         try(ServerSocket serverSocket = new ServerSocket(TCProtocol.PORT)){
             Map<String, String> quotes = new HashMap<>();
 
@@ -26,8 +28,44 @@ public class TCPQuoteServer {
                         String response = null;
 
                         switch (components[0]){
-                            case "TEST":
-                                response = "asdsad";
+                            case TCProtocol.ADD:
+                                if(components.length == 3){
+                                    quotes.put(components[2], components[1]);
+                                    response = TCProtocol.ADDED;
+                                }
+                                else{
+                                    response = TCProtocol.ERROR;
+                                }
+                                break;
+
+                            case TCProtocol.REMOVE:
+                                if(components.length == 3){
+                                    if(quotes.containsKey(components[2])){
+                                        if(quotes.get(components[2]).equals(components[1])){
+                                            quotes.remove(components[2]);
+                                            response = TCProtocol.REMOVED;
+                                        }
+                                        else{
+                                            response = TCProtocol.NOT_EXIST;
+                                        }
+                                    }
+                                    else{
+                                        response = TCProtocol.NOT_EXIST;
+                                    }
+                                }
+                                else{
+                                    response = TCProtocol.ERROR;
+                                }
+                                break;
+
+                            case TCProtocol.GET_QUOTE:
+                                if(quotes.isEmpty()){
+                                    response = TCProtocol.EMPTY;
+                                }
+                                else{
+                                    String randomPerson = getRandomKey(quotes);
+                                    response = quotes.get(randomPerson) + TCProtocol.DELIMITER + randomPerson;
+                                }
                                 break;
 
                             case TCProtocol.EXIT:
@@ -53,5 +91,17 @@ public class TCPQuoteServer {
             System.out.println("IOException occurred on server socket");
             System.out.println(e.getMessage());
         }
+    }
+
+    public static <K, V> K getRandomKey(Map<K, V> map) {
+        // Get a set of all keys
+        Object[] keys = map.keySet().toArray();
+
+        // Generate a random index
+        Random random = new Random();
+        int randomIndex = random.nextInt(keys.length);
+
+        // Retrieve and return the key at the random index
+        return (K) keys[randomIndex];
     }
 }
