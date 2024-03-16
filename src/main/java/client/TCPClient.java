@@ -13,7 +13,7 @@ public class TCPClient {
     public static void main(String[] args) {
         Scanner userInput = new Scanner(System.in);
         // Requests a connection
-        try (Socket dataSocket = new Socket("localhost",TCProtocol.PORT)) {
+        try (Socket dataSocket = new Socket(TCProtocol.HOST,TCProtocol.PORT)) {
 
             // Sets up communication lines
             // Create a Scanner to receive messages

@@ -33,12 +33,14 @@ public class TCPMathServer {
                         String [] components = message.split(TCProtocol.DELIMITER);
                         // Do the requested action and generate an appropriate response
                         String response = "";
+                        System.out.println(message);
                         switch(components[0]){
                             case(TCProtocol.CUBE):
                                 if(components.length == 2){
                                     if(isNumber(components[1])){
                                         int result = Integer.parseInt(components[1]);
-                                        response = String.valueOf(result * result);
+                                        result = result * result * result;
+                                        response = String.valueOf(result);
 
                                         if(result > clientLargest){
                                             clientLargest = result;
@@ -55,7 +57,8 @@ public class TCPMathServer {
                                 if(components.length == 2){
                                     if(isNumber(components[1])){
                                         int result = Integer.parseInt(components[1]);
-                                        response = String.valueOf(result * result * result);
+                                        result *= 2;
+                                        response = String.valueOf(result);
 
                                         if(result > clientLargest){
                                             clientLargest = result;

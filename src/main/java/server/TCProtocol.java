@@ -2,9 +2,10 @@ package server;
 
 public class TCProtocol {
     public final static int PORT = 2343;
+    public final static String HOST = "localhost";
     public final static String DELIMITER = "%%";
     public final static String INVALID = "INVALID_COMMAND";
-    public final static String EXIT = "GOODBYE";
+    public final static String EXIT = "EXIT";
 
     //exercise 1
     public final static String ECHO = "ECHO";
