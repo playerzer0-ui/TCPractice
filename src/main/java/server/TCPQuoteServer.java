@@ -18,70 +18,7 @@ public class TCPQuoteServer {
 
             while(true){
                 Socket socket = serverSocket.accept();
-                boolean validSession = true;
-
-                try(Scanner input = new Scanner(socket.getInputStream()); PrintWriter output = new PrintWriter(socket.getOutputStream())){
-
-                    while(validSession){
-                        String request = input.nextLine();
-                        String[] components = request.split(TCProtocol.DELIMITER);
-                        String response = null;
-
-                        switch (components[0]){
-                            case TCProtocol.ADD:
-                                if(components.length == 3){
-                                    quotes.put(components[2], components[1]);
-                                    response = TCProtocol.ADDED;
-                                }
-                                else{
-                                    response = TCProtocol.ERROR;
-                                }
-                                break;
-
-                            case TCProtocol.REMOVE:
-                                if(components.length == 3){
-                                    if(quotes.containsKey(components[2])){
-                                        if(quotes.get(components[2]).equals(components[1])){
-                                            quotes.remove(components[2]);
-                                            response = TCProtocol.REMOVED;
-                                        }
-                                        else{
-                                            response = TCProtocol.NOT_EXIST;
-                                        }
-                                    }
-                                    else{
-                                        response = TCProtocol.NOT_EXIST;
-                                    }
-                                }
-                                else{
-                                    response = TCProtocol.ERROR;
-                                }
-                                break;
-
-                            case TCProtocol.GET_QUOTE:
-                                if(quotes.isEmpty()){
-                                    response = TCProtocol.EMPTY;
-                                }
-                                else{
-                                    String randomPerson = getRandomKey(quotes);
-                                    response = quotes.get(randomPerson) + TCProtocol.DELIMITER + randomPerson;
-                                }
-                                break;
-
-                            case TCProtocol.EXIT:
-                                validSession = false;
-                                response = TCProtocol.EXIT;
-                                break;
-
-                            default:
-                                response = TCProtocol.INVALID;
-                                break;
-                        }
-
-                        output.println(response);
-                        output.flush();
-                    }
-                }
+                handleSession(socket, quotes);
             }
         }
         catch (BindException e) {
@@ -90,6 +27,86 @@ public class TCPQuoteServer {
         } catch (IOException e) {
             System.out.println("IOException occurred on server socket");
             System.out.println(e.getMessage());
+        }
+    }
+
+    public static void handleSession(Socket socket, Map<String, String> quotes){
+        try(Scanner input = new Scanner(socket.getInputStream()); PrintWriter output = new PrintWriter(socket.getOutputStream())){
+            boolean validSession = true;
+            while(validSession){
+                String request = input.nextLine();
+                String[] components = request.split(TCProtocol.DELIMITER);
+                String response = null;
+                System.out.println(request);
+
+                switch (components[0]){
+                    case TCProtocol.ADD:
+                        response = addCommand(components, quotes);
+                        break;
+
+                    case TCProtocol.REMOVE:
+                        response = removeCommand(components, quotes);
+                        break;
+
+                    case TCProtocol.GET_QUOTE:
+                        response = getQuoteCommand(components, quotes);
+                        break;
+
+                    case TCProtocol.EXIT:
+                        validSession = false;
+                        response = TCProtocol.EXIT;
+                        break;
+
+                    default:
+                        response = TCProtocol.INVALID;
+                        break;
+                }
+
+                output.println(response);
+                output.flush();
+            }
+        } catch (IOException e) {
+            System.out.println("IO exception: " + e.getMessage());
+        }
+    }
+
+    public static String addCommand(String[] components, Map<String, String> quotes){
+        if(components.length == 3){
+            quotes.put(components[2], components[1]);
+            return TCProtocol.ADDED;
+        }
+        else{
+            return TCProtocol.ERROR;
+        }
+    }
+
+    public static String removeCommand(String[] components, Map<String, String> quotes){
+        if(components.length == 3){
+            if(quotes.containsKey(components[2])){
+                if(quotes.get(components[2]).equals(components[1])){
+                    quotes.remove(components[2]);
+                    return TCProtocol.REMOVED;
+                }
+                else{
+                    return TCProtocol.NOT_EXIST;
+                }
+            }
+            else{
+                return TCProtocol.NOT_EXIST;
+            }
+        }
+        else{
+            return TCProtocol.ERROR;
+        }
+    }
+
+    public static String getQuoteCommand(String[] components, Map<String, String> quotes){
+        if(quotes.isEmpty()){
+            return TCProtocol.EMPTY;
+        }
+        else{
+            String randomPerson = getRandomKey(quotes);
+            return quotes.get(randomPerson) + TCProtocol.DELIMITER + randomPerson;
         }
     }
 

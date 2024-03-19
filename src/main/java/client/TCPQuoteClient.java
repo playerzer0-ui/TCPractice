@@ -1,5 +1,6 @@
 package client;
 
+import server.TCPQuoteServer;
 import server.TCProtocol;
 
 import java.io.IOException;
@@ -18,8 +19,7 @@ public class TCPQuoteClient {
                 boolean validSession = true;
 
                 while(validSession){
-                    System.out.println("input message (type EXIT to leave): ");
-                    String msg = sc.nextLine();
+                    String msg = actionMenu();
 
                     output.println(msg);
                     output.flush();
@@ -38,5 +38,54 @@ public class TCPQuoteClient {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void displayMenu(){
+        System.out.println("1) add a quote");
+        System.out.println("2) remove a quote");
+        System.out.println("3) get a random quote");
+        System.out.println("4) EXIT");
+    }
+
+    public static String actionMenu(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("input message (type the number): ");
+        String request = null;
+
+        String author;
+        String quote;
+
+        displayMenu();
+        String msg = sc.nextLine();
+        switch(msg){
+            case "1":
+                System.out.println("input author name: ");
+                author = sc.nextLine();
+                System.out.println("input quote: ");
+                quote = sc.nextLine();
+
+                request = TCProtocol.ADD + TCProtocol.DELIMITER + quote + TCProtocol.DELIMITER + author;
+                break;
+
+            case "2":
+                System.out.println("input author name: ");
+                author = sc.nextLine();
+
+                request = TCProtocol.REMOVE + TCProtocol.DELIMITER + author;
+                break;
+
+            case "3":
+                request = TCProtocol.GET_QUOTE;
+                break;
+
+            case "4":
+                request = TCProtocol.EXIT;
+                break;
+
+            default:
+                System.out.println("invalid number, try again");
+                break;
+        }
+        return request;
     }
 }
